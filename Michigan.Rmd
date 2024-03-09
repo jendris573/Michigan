@@ -1,7 +1,5 @@
 ---
-title: "Michigan Climate"
-author: "Joe Endris"
-date: "`r Sys.Date()`"
+title: "Climate around various areas of interest in Michigan."
 output:
   html_document:
     toc: yes
@@ -25,26 +23,164 @@ editor_options:
   mode: gfm
 ---
 
-```{r setup, include=FALSE}
+```{r libraries, include=FALSE}
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(ggplot2)
+library(ggfortify)
+library(plotly)
+library(leaflet)
+library(OpenStreetMap)
+library(sf)
+library(lubridate)
+```
+
+```{r data prep, include=FALSE}
+#read in Michigan climate data
+climate <- read_excel("climate.xlsx")
+
+#create column for Julian date
+climate$julian_date <- yday(climate$DATE)
+
+#create column for month
+climate <- mutate(climate, month=month(climate$DATE))
+
+#create column for year
+climate <- mutate(climate, year=year(climate$DATE))
+
+#omit NA in precipitation recordings 
+precip <- climate[complete.cases(climate[,4]),] %>%
+  group_by(NAME, julian_date) %>%
+  summarise(mean_precip = mean(PRCP))
+
+#omit NA in TMAX recordings 
+snow <- climate[complete.cases(climate[,5]),] %>%
+  group_by(NAME, julian_date) %>%
+  summarise(mean_snow = mean(SNOW))
+
+#omit NA in TMAX recordings 
+tmax <- climate[complete.cases(climate[,6]),] %>%
+  group_by(NAME, julian_date) %>%
+  summarise(mean_TMAX = mean(TMAX))
+
+#omit NA in TMIN recordings 
+tmin <- climate[complete.cases(climate[,7]),] %>%
+  group_by(NAME, julian_date) %>%
+  summarise(mean_TMIN = mean(TMIN))
+```
+
+```{r map set up, include= FALSE, echo= FALSE, warning= FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+state <- map_data("state") #load in states
+county <- map_data("county")
+MI <- county %>%
+  filter(region=='michigan')
+MI_co <- county %>%
+  filter(region=='michigan') 
+locations <- read_excel("Locations.xlsx")
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r static map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = locations, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
 ```
 
-## Including Plots
+Each area will include a map indicating the location along with plots to display the average high and low temperatures, average precipitation, and average snowfall.  All data covers 1 January 1980 to 31 Decemeber 2023.
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+Julian dates: <br>
+100 = April 10th <br>
+200 = July 19th <br>
+300 = October 27th <br>
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Benton Harbor
+```{r Benton Harbor data prep, echo=FALSE}
+bh <- locations %>%
+  filter(Location=="Benton Harbor")
+
+BH_tmax <- tmax %>%
+  filter(NAME=="Benton Harbor")
+
+BH_tmin <- tmin %>%
+  filter(NAME=="Benton Harbor")
+
+BH_precip <- precip %>%
+  filter(NAME=="Benton Harbor")
+
+BH_snow <- snow %>%
+  filter(NAME=="Benton Harbor")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r Benton Harbor map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = bh, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Benton Harbor plots, message=FALSE, echo=FALSE}  
+ggplot() +
+  geom_line(data=BH_tmax, aes(x=julian_date, y=mean_TMAX, color= "red"))+
+  geom_line(data=BH_tmin, aes(x=julian_date, y=mean_TMIN, color= "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+ggplot(data=BH_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+ggplot(data=BH_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
