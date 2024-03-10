@@ -143,9 +143,11 @@ ggplot() +
 ```
 
 ```{r Benton Harbor plots, message=FALSE, echo=FALSE}  
+#temperature plot
 ggplot() +
-  geom_line(data=BH_tmax, aes(x=julian_date, y=mean_TMAX, color= "red"))+
-  geom_line(data=BH_tmin, aes(x=julian_date, y=mean_TMIN, color= "blue"))+
+  geom_line(data=BH_tmax, aes(x=julian_date, y=mean_TMAX, color= "BH_tmax"))+
+  geom_line(data=BH_tmin, aes(x=julian_date, y=mean_TMIN, color= "BH_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
   labs(y=expression("Average Temperarture (°F)"),
        x="Julian date")+
   theme_bw()+
@@ -157,6 +159,7 @@ ggplot() +
         legend.position ="none")+
   ggtitle("Average Temperatures")
 
+#rain plot
 ggplot(data=BH_precip, aes(x=julian_date, y= mean_precip)) +
   geom_line()+
   geom_smooth(method="loess")+
@@ -170,7 +173,413 @@ ggplot(data=BH_precip, aes(x=julian_date, y= mean_precip)) +
         axis.line = element_line(colour = "black"))+
   ggtitle("Average Preciptiation")
 
+#snow plot
 ggplot(data=BH_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
+## Battle Creek
+```{r Battle Creek data prep, echo=FALSE}
+BC <- locations %>%
+  filter(Location=="Battle Creek")
+
+BC_tmax <- tmax %>%
+  filter(NAME=="Battle Creek")
+
+BC_tmin <- tmin %>%
+  filter(NAME=="Battle Creek")
+
+BC_precip <- precip %>%
+  filter(NAME=="Battle Creek")
+
+BC_snow <- snow %>%
+  filter(NAME=="Battle Creek")
+```
+
+```{r Battle Creek map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = BC, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Battle Creek plots, message=FALSE, echo=FALSE}  
+#temperature plot
+ggplot() +
+  geom_line(data=BC_tmax, aes(x=julian_date, y=mean_TMAX, color= "BC_tmax"))+
+  geom_line(data=BC_tmin, aes(x=julian_date, y=mean_TMIN, color= "BC_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+#rain plot
+ggplot(data=BC_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+#snow plot
+ggplot(data=BC_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
+## Traverse City
+```{r Traverse City data prep, echo=FALSE}
+TC <- locations %>%
+  filter(Location=="Traverse City")
+
+TC_tmax <- tmax %>%
+  filter(NAME=="Traverse City")
+
+TC_tmin <- tmin %>%
+  filter(NAME=="Traverse City")
+
+TC_precip <- precip %>%
+  filter(NAME=="Traverse City")
+
+TC_snow <- snow %>%
+  filter(NAME=="Traverse City")
+```
+
+```{r Traverse City map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = TC, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Traverse City plots, message=FALSE, echo=FALSE}  
+#temperature plot
+ggplot() +
+  geom_line(data=TC_tmax, aes(x=julian_date, y=mean_TMAX, color= "TC_tmax"))+
+  geom_line(data=TC_tmin, aes(x=julian_date, y=mean_TMIN, color= "TC_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+#rain plot
+ggplot(data=TC_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+#snow plot
+ggplot(data=TC_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
+## Jackson
+```{r Jackson data prep, echo=FALSE}
+jack <- locations %>%
+  filter(Location=="Jackson")
+
+jack_tmax <- tmax %>%
+  filter(NAME=="Jackson")
+
+jack_tmin <- tmin %>%
+  filter(NAME=="Jackson")
+
+jack_precip <- precip %>%
+  filter(NAME=="Jackson")
+
+jack_snow <- snow %>%
+  filter(NAME=="Jackson")
+```
+
+```{r Jackson map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = jack, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Jackson plots, message=FALSE, echo=FALSE}  
+#temperature plot
+ggplot() +
+  geom_line(data=jack_tmax, aes(x=julian_date, y=mean_TMAX, color= "jack_tmax"))+
+  geom_line(data=jack_tmin, aes(x=julian_date, y=mean_TMIN, color= "jack_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+#rain plot
+ggplot(data=jack_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+#snow plot
+ggplot(data=jack_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
+## Saginaw
+```{r Saginaw data prep, echo=FALSE}
+sag <- locations %>%
+  filter(Location=="Saginaw")
+
+sag_tmax <- tmax %>%
+  filter(NAME=="Saginaw")
+
+sag_tmin <- tmin %>%
+  filter(NAME=="Saginaw")
+
+sag_precip <- precip %>%
+  filter(NAME=="Saginaw")
+
+sag_snow <- snow %>%
+  filter(NAME=="Saginaw")
+```
+
+```{r Saginaw map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = sag, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Saginaw plots, message=FALSE, echo=FALSE}  
+#temperature plot
+ggplot() +
+  geom_line(data=sag_tmax, aes(x=julian_date, y=mean_TMAX, color= "sag_tmax"))+
+  geom_line(data=sag_tmin, aes(x=julian_date, y=mean_TMIN, color= "sag_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+#rain plot
+ggplot(data=sag_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+#snow plot
+ggplot(data=sag_snow, aes(x=julian_date, y= mean_snow)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Snowfall (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Snowfall")
+```
+
+## Sault Ste Marie
+```{r Sault Ste Marie data prep, echo=FALSE}
+ssm <- locations %>%
+  filter(Location=="Sault Ste Marie")
+
+ssm_tmax <- tmax %>%
+  filter(NAME=="Sault Ste Marie")
+
+ssm_tmin <- tmin %>%
+  filter(NAME=="Sault Ste Marie")
+
+ssm_precip <- precip %>%
+  filter(NAME=="Sault Ste Marie")
+
+ssm_snow <- snow %>%
+  filter(NAME=="Sault Ste Marie")
+```
+
+```{r Sault Ste Marie map, echo=FALSE}
+ggplot() + 
+  geom_polygon(data = state, aes(x=long, y = lat, group = group),
+               fill = "brown2", color="black") + 
+   geom_polygon(data = MI, aes(x=long, y = lat, group = group),
+                fill = "lightgrey", color="black") + 
+  geom_polygon(data = MI_co, aes(x=long, y = lat, group = group),
+                        fill = "chartreuse4", color="black") + 
+  geom_point(data = ssm, aes(x=x,y=y), color="white") +
+  coord_fixed(xlim = c(-90, -82),  ylim = c(41, 48)) + 
+  theme(panel.border = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_rect(fill ="deepskyblue", color = "deepskyblue"))+
+  xlab("Longitude") + ylab("Latitude")
+```
+
+```{r Sault Ste Marie plots, message=FALSE, echo=FALSE}  
+#temperature plot
+ggplot() +
+  geom_line(data=ssm_tmax, aes(x=julian_date, y=mean_TMAX, color= "ssm_tmax"))+
+  geom_line(data=ssm_tmin, aes(x=julian_date, y=mean_TMIN, color= "ssm_tmin"))+
+  scale_colour_manual(values = c("red", "blue"))+
+  labs(y=expression("Average Temperarture (°F)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"),
+        legend.position ="none")+
+  ggtitle("Average Temperatures")
+
+#rain plot
+ggplot(data=ssm_precip, aes(x=julian_date, y= mean_precip)) +
+  geom_line()+
+  geom_smooth(method="loess")+
+  labs(y=expression("Average Precipitation (inches)"),
+       x="Julian date")+
+  theme_bw()+
+  theme(panel.border = element_blank(), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.line = element_line(colour = "black"))+
+  ggtitle("Average Preciptiation")
+
+#snow plot
+ggplot(data=ssm_snow, aes(x=julian_date, y= mean_snow)) +
   geom_line()+
   geom_smooth(method="loess")+
   labs(y=expression("Average Snowfall (inches)"),
